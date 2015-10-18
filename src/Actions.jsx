@@ -1,6 +1,6 @@
 
 import Dispatcher from './Dispatcher';
-import { START_GAME, TIME_TICK } from './Constants';
+import { START_GAME, TIME_TICK, PLAYER_MOVE } from './Constants';
 
 export default {
     start_game(width, height, N_enemies) {
@@ -15,6 +15,14 @@ export default {
     time_tick() {
         Dispatcher.dispatch({
             actionType: TIME_TICK
+        });
+    },
+
+    player_move(dx, dy) {
+        Dispatcher.dispatch({
+            actionType: PLAYER_MOVE,
+            dx: dx,
+            dy: dy
         });
     }
 };

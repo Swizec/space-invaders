@@ -3,12 +3,13 @@ const EventEmitter = require('events').EventEmitter;
 import d3 from 'd3';
 
 import Dispatcher from './Dispatcher';
-import { START_GAME, TIME_TICK, CHANGE_EVENT, EDGE } from './Constants';
+import { START_GAME, TIME_TICK, CHANGE_EVENT, EDGE, PLAYER_MOVE } from './Constants';
 import Actions from './Actions';
 
 let Data = {
     timer: null,
-    enemies: []
+    enemies: [],
+    player: {}
 };
 
 class Store extends EventEmitter {
@@ -25,7 +26,8 @@ class Store extends EventEmitter {
     getGameState() {
         return {
             started: !!Data.timer,
-            enemies: Data.enemies
+            enemies: Data.enemies,
+            player: Data.player
         }
     }
 
@@ -51,6 +53,13 @@ class Store extends EventEmitter {
 
         d3.range(N_enemies).forEach(() => this.generateEnemy());
 
+        Data.player = {
+            w: 50,
+            h: 10,
+            x: width/2,
+            y: height-EDGE
+        };
+
         Data.timer = setInterval(() => Actions.time_tick(), 16);
     }
 
@@ -65,6 +74,23 @@ class Store extends EventEmitter {
 
             return e;
         });
+    }
+
+    movePlayer(dx, dy) {
+        let p = Data.player;
+
+        p.x += dx;
+        p.y += dy;
+
+        if (p.x-p.w/2 <= EDGE || p.x+p.w/2 >= Data.width-EDGE) {
+            p.x -= dx;
+        }
+
+        if (p.y <= Data.height/3 || p.y >= Data.height-EDGE) {
+            p.y -= dy;
+        }
+
+        Data.player = p;
     }
 
     addChangeListener(callback) {
@@ -91,6 +117,10 @@ Dispatcher.register(function (action) {
         case START_GAME:
             store.initGame(action.width, action.height, action.N_enemies);
             store.emitChange();
+            break;
+
+        case PLAYER_MOVE:
+            store.movePlayer(action.dx, action.dy);
             break;
 
         default:
