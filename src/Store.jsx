@@ -22,6 +22,7 @@ import Actions from './Actions';
 
 let Data = {
     timer: null,
+    ended: null,
     enemies: [],
     player: {},
     bullets: []
@@ -43,16 +44,16 @@ function bullet_speed(bullet) {
 
 function shouldShoot() {
     let N_alive = Data.enemies.filter((e) => e.alive).length,
-        p = (MS_PER_FRAME/(1000*60)/N_alive)*ENEMY_SHOTS_PER_MINUTE;
+        p = (ENEMY_SHOTS_PER_MINUTE/N_alive)/(MS_PER_FRAME*60);
 
     return Math.random() <= p;
 };
 
 function hit(e) {
-    let lx = e.x - ENEMY_RADIUS/2,
-        rx = e.x + ENEMY_RADIUS/2,
-        ty = e.y - ENEMY_RADIUS/2,
-        by = e.y + ENEMY_RADIUS/2,
+    let lx = e.x - e.w/2,
+        rx = e.x + e.w/2,
+        ty = e.y - e.h/2,
+        by = e.y + e.h/2,
         b;
 
     for (let i = 0; i < Data.bullets.length; i++) {
@@ -79,6 +80,7 @@ class Store extends EventEmitter {
     getGameState() {
         return {
             started: !!Data.timer,
+            ended: !!Data.ended,
             enemies: Data.enemies,
             player: Data.player,
             bullets: Data.bullets
@@ -91,12 +93,21 @@ class Store extends EventEmitter {
             alive: true,
             x: this.x_scale(Math.random()),
             y: this.enemy_y(Math.random()),
+            w: ENEMY_RADIUS,
+            h: ENEMY_RADIUS,
             speed: 1,
             vector: [1, 0]
         });
     }
 
-    initGame(width, height, N_enemies) {
+    startGame(width, height, N_enemies) {
+        Data =  Data = {
+            timer: null,
+            ended: null,
+            enemies: [],
+            player: {},
+            bullets: []
+        };
         Data.width = width;
         Data.height = height;
 
@@ -118,8 +129,13 @@ class Store extends EventEmitter {
         Data.timer = setInterval(() => Actions.time_tick(), MS_PER_FRAME);
     }
 
+    stopGame() {
+        Data.timer = clearInterval(Data.timer);
+        Data.ended = true;
+    }
+
     advanceGameState() {
-        Data.enemies = Data.enemies.map((e) => {
+        Data.enemies = Data.enemies.filter((e) => e.alive).map((e) => {
             e.x = e.x+e.vector[0]*e.speed;
             e.y = e.y+e.vector[1]*e.speed;
 
@@ -153,6 +169,10 @@ class Store extends EventEmitter {
                                    || b.y <= EDGE
                                    || b.y >= Data.height-EDGE)
                            );
+
+        if (hit(Data.player) || !Data.enemies.filter((e) => e.alive).length) {
+            this.stopGame();
+        }
     }
 
     movePlayer(dx, dy) {
@@ -174,11 +194,11 @@ class Store extends EventEmitter {
 
     addBullet(origin, vector) {
         Data.bullets.push({
-            x: origin.x,
-            y: origin.y,
+            x: origin.x+vector[0]*3,
+            y: origin.y+vector[1]*3+origin.h*vector[1],
             vector: vector,
             ticks_alive: 0,
-            id: 'bullet-'+(new Date().getTime())
+            id: 'bullet-'+(new Date().getTime())+'-'+Math.random()*1000
         });
     }
 
@@ -204,7 +224,7 @@ Dispatcher.register(function (action) {
             break;
 
         case START_GAME:
-            store.initGame(action.width, action.height, action.N_enemies);
+            store.startGame(action.width, action.height, action.N_enemies);
             store.emitChange();
             break;
 

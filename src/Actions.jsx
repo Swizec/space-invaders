@@ -6,7 +6,8 @@ import { START_GAME,
          MOUSE_TRIGGER,
          KEY_TRIGGER,
          PLAYER_STOP,
-         PLAYER_SHOOT
+         PLAYER_SHOOT,
+         GAME_OVER
 } from './Constants';
 
 export default {
@@ -52,6 +53,12 @@ export default {
     player_shoot() {
         Dispatcher.dispatch({
             actionType: PLAYER_SHOOT
+        });
+    },
+
+    game_over() {
+        Dispatcher.dispatch({
+            actionType: GAME_OVER
         });
     }
 

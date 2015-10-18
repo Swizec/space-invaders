@@ -79,6 +79,22 @@ class SpaceInvaders extends Component {
                     <Player {...this.state.player} />
                 </svg>
             );
+        }else if (this.state.ended) {
+            let endGameText = 'Game over',
+                explainerText = 'You got shot by an invader or yourself';
+
+            if (!this.state.enemies.filter((e) => e.alive).length) {
+                endGameText = 'You win!';
+                explainerText = 'You shot all the invaders and saved the planet \o/';
+            }
+
+            return (
+                <div className="text-center">
+                    <h1>{endGameText}</h1>
+                    <p className="lead">{explainerText}</p>
+                    <button onClick={this.start_game} className="btn btn-success btn-lg">Start Another Game</button>
+                </div>
+            );
         }else{
             return (
                 <div className="text-center">
