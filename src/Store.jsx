@@ -31,10 +31,12 @@ class Store extends EventEmitter {
 
     generateEnemy() {
         Data.enemies.push({
-            id: Data.enemies.length,
+            id: 'invader-'+Data.enemies.length,
             alive: true,
             x: this.x_scale(Math.random()),
-            y: this.enemy_y(Math.random())
+            y: this.enemy_y(Math.random()),
+            speed: 1,
+            vector: [1, 0]
         });
     }
 
@@ -50,6 +52,19 @@ class Store extends EventEmitter {
         d3.range(N_enemies).forEach(() => this.generateEnemy());
 
         Data.timer = setInterval(() => Actions.time_tick(), 16);
+    }
+
+    advanceGameState() {
+        Data.enemies = Data.enemies.map((e) => {
+            e.x = e.x+e.vector[0]*e.speed;
+            e.y = e.y+e.vector[1]*e.speed;
+
+            if (e.x <= EDGE || e.x >= Data.width-EDGE) {
+                e.vector[0] = -e.vector[0];
+            }
+
+            return e;
+        });
     }
 
     addChangeListener(callback) {
@@ -69,6 +84,7 @@ Dispatcher.register(function (action) {
 
     switch (action.actionType) {
         case TIME_TICK:
+            store.advanceGameState();
             store.emitChange();
             break;
 

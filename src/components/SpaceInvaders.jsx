@@ -6,6 +6,7 @@ import Store from '../Store';
 import Actions from '../Actions';
 
 import Enemies from './Enemies';
+import Player from './Player';
 
 @autobind
 class SpaceInvaders extends Component {
@@ -38,6 +39,7 @@ class SpaceInvaders extends Component {
             return (
                 <svg width={this.props.width} height={this.props.height}>
                     <Enemies enemies={this.state.enemies} />
+                    <Player {...this.state.player} />
                 </svg>
             );
         }else{
