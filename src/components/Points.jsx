@@ -6,7 +6,9 @@ class Point extends Component {
         return (
             <circle cx={this.props.x}
                     cy={this.props.y}
-                    style={{fillOpacity: 0.4}}
+                    style={{fillOpacity: this.props.fillOpacity || 0.4,
+                            stroke: this.props.color || 'black',
+                            fillColor: this.props.color || 'black'}}
                     r={this.props.r}
             />
         );

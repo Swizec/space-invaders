@@ -12,7 +12,8 @@ import { START_GAME,
          PLAYER_SHOOT,
          MOUSE_TRIGGER,
          KEY_TRIGGER,
-         PLAYER_MAX_SPEED
+         PLAYER_MAX_SPEED,
+         BULLET_MAX_SPEED
 } from './Constants';
 import Actions from './Actions';
 
@@ -31,6 +32,12 @@ function player_speed() {
     return PLAYER_MAX_SPEED*multiplier;
 };
 
+function bullet_speed(bullet) {
+    let multiplier = d3.ease('exp')(bullet.ticks_alive/BULLET_MAX_SPEED);
+
+    return BULLET_MAX_SPEED*multiplier;
+};
+
 class Store extends EventEmitter {
     constructor() {
         super();
@@ -39,7 +46,7 @@ class Store extends EventEmitter {
                          .domain([0, 1]);
 
         this.enemy_y = d3.scale.threshold()
-                    .domain(d3.range(0, 1, 0.25));
+                         .domain(d3.range(0, 1, 0.25));
     }
 
     getGameState() {
@@ -98,8 +105,10 @@ class Store extends EventEmitter {
 
         Data.bullets = Data.bullets
                            .map((b) => {
-                               b.x = b.x+b.vector[0];
-                               b.y = b.y+b.vector[1];
+                               b.ticks_alive += 1;
+
+                               b.x = b.x+b.vector[0]*bullet_speed(b);
+                               b.y = b.y+b.vector[1]*bullet_speed(b);
 
                                return b;
                            })
@@ -133,6 +142,7 @@ class Store extends EventEmitter {
             x: origin.x,
             y: origin.y,
             vector: vector,
+            ticks_alive: 0,
             id: new Date().getTime()
         });
     }

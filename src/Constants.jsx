@@ -12,3 +12,5 @@ export const PLAYER_SHOOT = 'player_shoot';
 
 export const MOUSE_TRIGGER = 'mouse';
 export const KEY_TRIGGER = 'key';
+
+export const BULLET_MAX_SPEED = 5;
