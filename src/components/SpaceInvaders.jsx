@@ -18,10 +18,14 @@ class SpaceInvaders extends Component {
 
     componentDidMount() {
         Store.addChangeListener(this._onChange);
+        window.addEventListener('keydown', this.keydown);
+        window.addEventListener('keyup', this.keyup);
     }
 
     componentWillUnmount() {
         Store.removeChangeListener(this._onChange);
+        window.removeEventListener('keydown', this.keydown);
+        window.addEventListener('keyup', this.keyup);
     }
 
     _onChange() {
@@ -32,6 +36,37 @@ class SpaceInvaders extends Component {
         Actions.start_game(this.props.width,
                            this.props.height,
                            this.props.initialEnemies);
+    }
+
+    keydown(event) {
+        let key = event.keyIdentifier;
+
+        switch (key) {
+            case 'Right':
+                Actions.player_key_move(1, 0);
+                break;
+            case 'Left':
+                Actions.player_key_move(-1, 0);
+                break;
+            case 'U+0020':
+                Actions.player_shoot();
+                break;
+            default:
+                // no op
+        }
+    }
+
+    keyup(event) {
+        let key = event.keyIdentifier;
+
+        switch (key) {
+            case 'Right':
+            case 'Left':
+                Actions.player_stop();
+                break;
+            default:
+                // no op
+        }
     }
 
     render() {

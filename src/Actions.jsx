@@ -1,6 +1,13 @@
 
 import Dispatcher from './Dispatcher';
-import { START_GAME, TIME_TICK, PLAYER_MOVE } from './Constants';
+import { START_GAME,
+         TIME_TICK,
+         PLAYER_MOVE,
+         MOUSE_TRIGGER,
+         KEY_TRIGGER,
+         PLAYER_STOP,
+         PLAYER_SHOOT
+} from './Constants';
 
 export default {
     start_game(width, height, N_enemies) {
@@ -22,7 +29,30 @@ export default {
         Dispatcher.dispatch({
             actionType: PLAYER_MOVE,
             dx: dx,
-            dy: dy
+            dy: dy,
+            type: MOUSE_TRIGGER
+        });
+    },
+
+    player_key_move(dx, dy) {
+        Dispatcher.dispatch({
+            actionType: PLAYER_MOVE,
+            dx: dx,
+            dy: dy,
+            type: KEY_TRIGGER
+        });
+    },
+
+    player_stop() {
+        Dispatcher.dispatch({
+            actionType: PLAYER_STOP
+        });
+    },
+
+    player_shoot() {
+        Dispatcher.dispatch({
+            actionType: PLAYER_SHOOT
         });
     }
+
 };

@@ -3,13 +3,32 @@ const EventEmitter = require('events').EventEmitter;
 import d3 from 'd3';
 
 import Dispatcher from './Dispatcher';
-import { START_GAME, TIME_TICK, CHANGE_EVENT, EDGE, PLAYER_MOVE } from './Constants';
+import { START_GAME,
+         TIME_TICK,
+         CHANGE_EVENT,
+         EDGE,
+         PLAYER_MOVE,
+         PLAYER_STOP,
+         PLAYER_SHOOT,
+         MOUSE_TRIGGER,
+         KEY_TRIGGER,
+         PLAYER_MAX_SPEED
+} from './Constants';
 import Actions from './Actions';
 
 let Data = {
     timer: null,
     enemies: [],
-    player: {}
+    player: {},
+    bullets: []
+};
+
+function player_speed() {
+    let multiplier = d3.ease('cubic-in-out')(Data.player.ticks_moving/5);
+
+    Data.player.ticks_moving += 1;
+
+    return PLAYER_MAX_SPEED*multiplier;
 };
 
 class Store extends EventEmitter {
@@ -27,7 +46,8 @@ class Store extends EventEmitter {
         return {
             started: !!Data.timer,
             enemies: Data.enemies,
-            player: Data.player
+            player: Data.player,
+            bullets: Data.bullets
         }
     }
 
@@ -57,7 +77,8 @@ class Store extends EventEmitter {
             w: 50,
             h: 10,
             x: width/2,
-            y: height-EDGE
+            y: height-EDGE,
+            ticks_moving: 0
         };
 
         Data.timer = setInterval(() => Actions.time_tick(), 16);
@@ -93,6 +114,13 @@ class Store extends EventEmitter {
         Data.player = p;
     }
 
+    addBullet(origin) {
+        Data.bullets.push({
+            x: origin.x,
+            y: origin.y
+        });
+    }
+
     addChangeListener(callback) {
         this.on(CHANGE_EVENT, callback);
     }
@@ -120,7 +148,20 @@ Dispatcher.register(function (action) {
             break;
 
         case PLAYER_MOVE:
-            store.movePlayer(action.dx, action.dy);
+            if (action.type == MOUSE_TRIGGER) {
+                store.movePlayer(action.dx, action.dy);
+            }else{
+                let speed = player_speed();
+                store.movePlayer(speed*action.dx, speed*action.dy);
+            }
+            break;
+
+        case PLAYER_STOP:
+            Data.player.ticks_moving = 0;
+            break;
+
+        case PLAYER_SHOOT:
+            store.addBullet(Data.player);
             break;
 
         default:
