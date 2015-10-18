@@ -13,7 +13,9 @@ import { START_GAME,
          MOUSE_TRIGGER,
          KEY_TRIGGER,
          PLAYER_MAX_SPEED,
-         BULLET_MAX_SPEED
+         BULLET_MAX_SPEED,
+         ENEMY_SHOTS_PER_MINUTE,
+         MS_PER_FRAME
 } from './Constants';
 import Actions from './Actions';
 
@@ -36,6 +38,12 @@ function bullet_speed(bullet) {
     let multiplier = d3.ease('exp')(bullet.ticks_alive/BULLET_MAX_SPEED);
 
     return BULLET_MAX_SPEED*multiplier;
+};
+
+function shouldShoot() {
+    let p = (MS_PER_FRAME/(1000*60)/Data.enemies.length)*ENEMY_SHOTS_PER_MINUTE;
+
+    return Math.random() <= p;
 };
 
 class Store extends EventEmitter {
@@ -88,7 +96,7 @@ class Store extends EventEmitter {
             ticks_moving: 0
         };
 
-        Data.timer = setInterval(() => Actions.time_tick(), 16);
+        Data.timer = setInterval(() => Actions.time_tick(), MS_PER_FRAME);
     }
 
     advanceGameState() {
@@ -98,6 +106,10 @@ class Store extends EventEmitter {
 
             if (e.x <= EDGE || e.x >= Data.width-EDGE) {
                 e.vector[0] = -e.vector[0];
+            }
+
+            if (shouldShoot()) {
+                this.addBullet(e, [0, 1]);
             }
 
             return e;

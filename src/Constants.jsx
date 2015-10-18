@@ -14,3 +14,6 @@ export const MOUSE_TRIGGER = 'mouse';
 export const KEY_TRIGGER = 'key';
 
 export const BULLET_MAX_SPEED = 5;
+
+export const ENEMY_SHOTS_PER_MINUTE = 60;
+export const MS_PER_FRAME = 16;
