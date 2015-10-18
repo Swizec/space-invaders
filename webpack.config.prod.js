@@ -24,9 +24,12 @@ module.exports = {
       }
     })
   ],
+  resolve: {
+    extensions: ['', '.js', '.jsx']
+  },
   module: {
     loaders: [{
-      test: /\.js$/,
+      test: /\.js*$/,
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
     }]

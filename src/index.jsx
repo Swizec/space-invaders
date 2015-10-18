@@ -1,4 +1,4 @@
 import React from 'react';
-import { App } from './App';
+import SpaceInvaders from './components/SpaceInvaders';
 
-React.render(<App />, document.getElementById('root'));
+React.render(<SpaceInvaders />, document.getElementById('root'));
