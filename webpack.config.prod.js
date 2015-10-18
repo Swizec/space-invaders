@@ -7,7 +7,7 @@ module.exports = {
     './src/index'
   ],
   output: {
-    path: path.join(__dirname, 'dist'),
+    path: path.join(__dirname, 'static'),
     filename: 'bundle.js',
     publicPath: '/static/'
   },
@@ -29,7 +29,7 @@ module.exports = {
   },
   module: {
     loaders: [{
-      test: /\.js*$/,
+      test: /\.js|\.jsx*$/,
       loaders: ['babel'],
       include: path.join(__dirname, 'src')
     }]
