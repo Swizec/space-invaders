@@ -1,3 +1,5 @@
 
-export const START_TIME = 'start_time';
+export const START_GAME = 'start_game';
 export const TIME_TICK = 'tick';
+export const CHANGE_EVENT = 'change';
+export const EDGE = 10;
