@@ -92,7 +92,8 @@ class SpaceInvaders extends Component {
                 <div className="text-center">
                     <h1>{endGameText}</h1>
                     <p className="lead">{explainerText}</p>
-                    <button onClick={this.start_game} className="btn btn-success btn-lg">Start Another Game</button>
+                    <p><button onClick={this.start_game} className="btn btn-success btn-lg">Start Another Game</button></p>
+                    <p>Built for #HTML5DevConf 2015 by Swizec</p>
                 </div>
             );
         }else{
@@ -100,7 +101,8 @@ class SpaceInvaders extends Component {
                 <div className="text-center">
                     <h1>Space Invaders</h1>
                     <p className="lead">Simple space invaders clone built with React and some d3.js. <br/><code>Arrow keys</code> or mouse drag to move, <code>&lt;space&gt;</code> to shoot.</p>
-                    <button onClick={this.start_game} className="btn btn-success btn-lg">Start Game</button>
+                    <p><button onClick={this.start_game} className="btn btn-success btn-lg">Start Game</button></p>
+                    <p>Built for #HTML5DevConf 2015 by Swizec</p>
                 </div>
             );
         }
