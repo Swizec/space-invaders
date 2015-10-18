@@ -1,27 +1,17 @@
 
 import React, { Component } from 'react';
-import autobind from 'autobind-decorator';
 
-class Enemy extends Component {
-    render() {
-        return (
-            <circle cx={this.props.x}
-                    cy={this.props.y}
-                    style={{fillOpacity: 0.4}}
-                    r="5"
-            />
-        );
-    }
-};
+import Points from './Points';
 
 export default class Enemies extends Component {
     render() {
+        let pointsData = this.props.enemies.map((enemy) => {
+            enemy.r = 5;
+            return enemy;
+        });
+
         return (
-            <g>
-                {this.props.enemies.map((enemy) => {
-                    return (<Enemy {...enemy} key={enemy.id} />);
-                })}
-            </g>
+            <Points points={pointsData} />
         );
     }
 }
