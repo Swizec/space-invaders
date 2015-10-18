@@ -24,7 +24,7 @@ let Data = {
 };
 
 function player_speed() {
-    let multiplier = d3.ease('cubic-in-out')(Data.player.ticks_moving/5);
+    let multiplier = d3.ease('cubic-in-out')(Data.player.ticks_moving/3);
 
     Data.player.ticks_moving += 1;
 
@@ -95,6 +95,20 @@ class Store extends EventEmitter {
 
             return e;
         });
+
+        Data.bullets = Data.bullets
+                           .map((b) => {
+                               b.x = b.x+b.vector[0];
+                               b.y = b.y+b.vector[1];
+
+                               return b;
+                           })
+                           .filter((b) =>
+                                !(b.x <= EDGE
+                                   || b.x >= Data.width-EDGE
+                                   || b.y <= EDGE
+                                   || b.y >= Data.height-EDGE)
+                           );
     }
 
     movePlayer(dx, dy) {
@@ -114,10 +128,12 @@ class Store extends EventEmitter {
         Data.player = p;
     }
 
-    addBullet(origin) {
+    addBullet(origin, vector) {
         Data.bullets.push({
             x: origin.x,
-            y: origin.y
+            y: origin.y,
+            vector: vector,
+            id: new Date().getTime()
         });
     }
 
@@ -161,7 +177,7 @@ Dispatcher.register(function (action) {
             break;
 
         case PLAYER_SHOOT:
-            store.addBullet(Data.player);
+            store.addBullet(Data.player, [0, -1]);
             break;
 
         default:
