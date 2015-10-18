@@ -15,6 +15,7 @@ import { START_GAME,
          PLAYER_MAX_SPEED,
          BULLET_MAX_SPEED,
          ENEMY_SHOTS_PER_MINUTE,
+         ENEMY_RADIUS,
          MS_PER_FRAME
 } from './Constants';
 import Actions from './Actions';
@@ -41,10 +42,28 @@ function bullet_speed(bullet) {
 };
 
 function shouldShoot() {
-    let p = (MS_PER_FRAME/(1000*60)/Data.enemies.length)*ENEMY_SHOTS_PER_MINUTE;
+    let N_alive = Data.enemies.filter((e) => e.alive).length,
+        p = (MS_PER_FRAME/(1000*60)/N_alive)*ENEMY_SHOTS_PER_MINUTE;
 
     return Math.random() <= p;
 };
+
+function hit(e) {
+    let lx = e.x - ENEMY_RADIUS/2,
+        rx = e.x + ENEMY_RADIUS/2,
+        ty = e.y - ENEMY_RADIUS/2,
+        by = e.y + ENEMY_RADIUS/2,
+        b;
+
+    for (let i = 0; i < Data.bullets.length; i++) {
+        b = Data.bullets[i];
+        if (b.x >= lx && b.x <= rx && b.y >= ty && b.y <= by) {
+            return true;
+        }
+    };
+
+    return false;
+}
 
 class Store extends EventEmitter {
     constructor() {
@@ -108,6 +127,10 @@ class Store extends EventEmitter {
                 e.vector[0] = -e.vector[0];
             }
 
+            if (hit(e)) {
+                e.alive = false;
+            }
+
             if (shouldShoot()) {
                 this.addBullet(e, [0, 1]);
             }
@@ -155,7 +178,7 @@ class Store extends EventEmitter {
             y: origin.y,
             vector: vector,
             ticks_alive: 0,
-            id: new Date().getTime()
+            id: 'bullet-'+(new Date().getTime())
         });
     }
 
