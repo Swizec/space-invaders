@@ -4,6 +4,7 @@ import d3 from 'd3';
 
 import Dispatcher from './Dispatcher';
 import { START_GAME,
+         STOP_GAME,
          TIME_TICK,
          CHANGE_EVENT,
          EDGE,
@@ -225,6 +226,11 @@ Dispatcher.register(function (action) {
 
         case START_GAME:
             store.startGame(action.width, action.height, action.N_enemies);
+            store.emitChange();
+            break;
+
+        case STOP_GAME:
+            store.stopGame();
             store.emitChange();
             break;
 

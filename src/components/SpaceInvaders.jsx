@@ -1,6 +1,5 @@
 
 import React, { Component } from 'react';
-import autobind from 'autobind-decorator';
 
 import Store from '../Store';
 import Actions from '../Actions';
@@ -9,7 +8,6 @@ import Enemies from './Enemies';
 import Bullets from './Bullets';
 import Player from './Player';
 
-@autobind
 class SpaceInvaders extends Component {
 
     constructor() {
@@ -18,15 +16,16 @@ class SpaceInvaders extends Component {
     }
 
     componentDidMount() {
-        Store.addChangeListener(this._onChange);
-        window.addEventListener('keydown', this.keydown);
-        window.addEventListener('keyup', this.keyup);
+        Store.addChangeListener(::this._onChange);
+        window.addEventListener('keydown', ::this.keydown);
+        window.addEventListener('keyup', ::this.keyup);
     }
 
     componentWillUnmount() {
-        Store.removeChangeListener(this._onChange);
-        window.removeEventListener('keydown', this.keydown);
-        window.addEventListener('keyup', this.keyup);
+        Actions.stop_game();
+        Store.removeChangeListener(::this._onChange);
+        window.removeEventListener('keydown', ::this.keydown);
+        window.addEventListener('keyup', ::this.keyup);
     }
 
     _onChange() {
@@ -92,7 +91,7 @@ class SpaceInvaders extends Component {
                 <div className="text-center">
                     <h1>{endGameText}</h1>
                     <p className="lead">{explainerText}</p>
-                    <p><button onClick={this.start_game} className="btn btn-success btn-lg">Start Another Game</button></p>
+                    <p><button onClick={::this.start_game} className="btn btn-success btn-lg">Start Another Game</button></p>
                     <p>Built for #HTML5DevConf 2015 by Swizec</p>
                 </div>
             );
@@ -101,7 +100,7 @@ class SpaceInvaders extends Component {
                 <div className="text-center">
                     <h1>Space Invaders</h1>
                     <p className="lead">Simple space invaders clone built with React and some d3.js. <br/><code>Arrow keys</code> or mouse drag to move, <code>&lt;space&gt;</code> to shoot.</p>
-                    <p><button onClick={this.start_game} className="btn btn-success btn-lg">Start Game</button></p>
+                    <p><button onClick={::this.start_game} className="btn btn-success btn-lg">Start Game</button></p>
                     <p>Built for #HTML5DevConf 2015 by Swizec</p>
                 </div>
             );

@@ -1,6 +1,7 @@
 
 import Dispatcher from './Dispatcher';
 import { START_GAME,
+         STOP_GAME,
          TIME_TICK,
          PLAYER_MOVE,
          MOUSE_TRIGGER,
@@ -17,6 +18,12 @@ export default {
             width: width,
             height: height,
             N_enemies: N_enemies
+        });
+    },
+
+    stop_game() {
+        Dispatcher.dispatch({
+            actionType: STOP_GAME
         });
     },
 
