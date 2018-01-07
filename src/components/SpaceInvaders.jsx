@@ -1,17 +1,13 @@
+import React, { Component } from "react";
 
-import React, { Component } from 'react';
-import autobind from 'autobind-decorator';
+import Store from "../Store";
+import Actions from "../Actions";
 
-import Store from '../Store';
-import Actions from '../Actions';
+import Enemies from "./Enemies";
+import Bullets from "./Bullets";
+import Player from "./Player";
 
-import Enemies from './Enemies';
-import Bullets from './Bullets';
-import Player from './Player';
-
-@autobind
 class SpaceInvaders extends Component {
-
     constructor() {
         super();
         this.state = Store.getGameState();
@@ -19,41 +15,43 @@ class SpaceInvaders extends Component {
 
     componentDidMount() {
         Store.addChangeListener(this._onChange);
-        window.addEventListener('keydown', this.keydown);
-        window.addEventListener('keyup', this.keyup);
+        window.addEventListener("keydown", this.keydown);
+        window.addEventListener("keyup", this.keyup);
     }
 
     componentWillUnmount() {
         Store.removeChangeListener(this._onChange);
-        window.removeEventListener('keydown', this.keydown);
-        window.addEventListener('keyup', this.keyup);
+        window.removeEventListener("keydown", this.keydown);
+        window.addEventListener("keyup", this.keyup);
     }
 
-    _onChange() {
+    _onChange = () => {
         this.setState(Store.getGameState());
-    }
+    };
 
-    start_game() {
-        Actions.start_game(this.props.width,
-                           this.props.height,
-                           this.props.initialEnemies);
-    }
+    start_game = () => {
+        Actions.start_game(
+            this.props.width,
+            this.props.height,
+            this.props.initialEnemies
+        );
+    };
 
     keydown(event) {
         let key = event.keyIdentifier;
 
         switch (key) {
-            case 'Right':
+            case "Right":
                 Actions.player_key_move(1, 0);
                 break;
-            case 'Left':
+            case "Left":
                 Actions.player_key_move(-1, 0);
                 break;
-            case 'U+0020':
+            case "U+0020":
                 Actions.player_shoot();
                 break;
             default:
-                // no op
+            // no op
         }
     }
 
@@ -61,12 +59,12 @@ class SpaceInvaders extends Component {
         let key = event.keyIdentifier;
 
         switch (key) {
-            case 'Right':
-            case 'Left':
+            case "Right":
+            case "Left":
                 Actions.player_stop();
                 break;
             default:
-                // no op
+            // no op
         }
     }
 
@@ -79,29 +77,49 @@ class SpaceInvaders extends Component {
                     <Player {...this.state.player} />
                 </svg>
             );
-        }else if (this.state.ended) {
-            let endGameText = 'Game over',
-                explainerText = 'You got shot by an invader or yourself';
+        } else if (this.state.ended) {
+            let endGameText = "Game over",
+                explainerText = "You got shot by an invader or yourself";
 
-            if (!this.state.enemies.filter((e) => e.alive).length) {
-                endGameText = 'You win!';
-                explainerText = 'You shot all the invaders and saved the planet \o/';
+            if (!this.state.enemies.filter(e => e.alive).length) {
+                endGameText = "You win!";
+                explainerText =
+                    "You shot all the invaders and saved the planet o/";
             }
 
             return (
                 <div className="text-center">
                     <h1>{endGameText}</h1>
                     <p className="lead">{explainerText}</p>
-                    <p><button onClick={this.start_game} className="btn btn-success btn-lg">Start Another Game</button></p>
+                    <p>
+                        <button
+                            onClick={this.start_game}
+                            className="btn btn-success btn-lg"
+                        >
+                            Start Another Game
+                        </button>
+                    </p>
                     <p>Built for #HTML5DevConf 2015 by Swizec</p>
                 </div>
             );
-        }else{
+        } else {
             return (
                 <div className="text-center">
                     <h1>Space Invaders</h1>
-                    <p className="lead">Simple space invaders clone built with React and some d3.js. <br/><code>Arrow keys</code> or mouse drag to move, <code>&lt;space&gt;</code> to shoot.</p>
-                    <p><button onClick={this.start_game} className="btn btn-success btn-lg">Start Game</button></p>
+                    <p className="lead">
+                        Simple space invaders clone built with React and some
+                        d3.js. <br />
+                        <code>Arrow keys</code> or mouse drag to move,{" "}
+                        <code>&lt;space&gt;</code> to shoot.
+                    </p>
+                    <p>
+                        <button
+                            onClick={this.start_game}
+                            className="btn btn-success btn-lg"
+                        >
+                            Start Game
+                        </button>
+                    </p>
                     <p>Built for #HTML5DevConf 2015 by Swizec</p>
                 </div>
             );

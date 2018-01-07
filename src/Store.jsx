@@ -1,24 +1,26 @@
+import * as d3 from "d3";
 
-const EventEmitter = require('events').EventEmitter;
-import d3 from 'd3';
+import Dispatcher from "./Dispatcher";
+import Actions from "./Actions";
 
-import Dispatcher from './Dispatcher';
-import { START_GAME,
-         TIME_TICK,
-         CHANGE_EVENT,
-         EDGE,
-         PLAYER_MOVE,
-         PLAYER_STOP,
-         PLAYER_SHOOT,
-         MOUSE_TRIGGER,
-         KEY_TRIGGER,
-         PLAYER_MAX_SPEED,
-         BULLET_MAX_SPEED,
-         ENEMY_SHOTS_PER_MINUTE,
-         ENEMY_RADIUS,
-         MS_PER_FRAME
-} from './Constants';
-import Actions from './Actions';
+import {
+    START_GAME,
+    TIME_TICK,
+    CHANGE_EVENT,
+    EDGE,
+    PLAYER_MOVE,
+    PLAYER_STOP,
+    PLAYER_SHOOT,
+    MOUSE_TRIGGER,
+    KEY_TRIGGER,
+    PLAYER_MAX_SPEED,
+    BULLET_MAX_SPEED,
+    ENEMY_SHOTS_PER_MINUTE,
+    ENEMY_RADIUS,
+    MS_PER_FRAME
+} from "./Constants";
+
+const EventEmitter = require("events").EventEmitter;
 
 let Data = {
     timer: null,
@@ -29,31 +31,31 @@ let Data = {
 };
 
 function player_speed() {
-    let multiplier = d3.ease('cubic-in-out')(Data.player.ticks_moving/3);
+    let multiplier = d3.ease("cubic-in-out")(Data.player.ticks_moving / 3);
 
     Data.player.ticks_moving += 1;
 
-    return PLAYER_MAX_SPEED*multiplier;
-};
+    return PLAYER_MAX_SPEED * multiplier;
+}
 
 function bullet_speed(bullet) {
-    let multiplier = d3.ease('exp')(bullet.ticks_alive/BULLET_MAX_SPEED);
+    let multiplier = d3.ease("exp")(bullet.ticks_alive / BULLET_MAX_SPEED);
 
-    return BULLET_MAX_SPEED*multiplier;
-};
+    return BULLET_MAX_SPEED * multiplier;
+}
 
 function shouldShoot() {
-    let N_alive = Data.enemies.filter((e) => e.alive).length,
-        p = (ENEMY_SHOTS_PER_MINUTE/N_alive)/(MS_PER_FRAME*60);
+    let N_alive = Data.enemies.filter(e => e.alive).length,
+        p = ENEMY_SHOTS_PER_MINUTE / N_alive / (MS_PER_FRAME * 60);
 
     return Math.random() <= p;
-};
+}
 
 function hit(e) {
-    let lx = e.x - e.w/2,
-        rx = e.x + e.w/2,
-        ty = e.y - e.h/2,
-        by = e.y + e.h/2,
+    let lx = e.x - e.w / 2,
+        rx = e.x + e.w / 2,
+        ty = e.y - e.h / 2,
+        by = e.y + e.h / 2,
         b;
 
     for (let i = 0; i < Data.bullets.length; i++) {
@@ -61,7 +63,7 @@ function hit(e) {
         if (b.x >= lx && b.x <= rx && b.y >= ty && b.y <= by) {
             return true;
         }
-    };
+    }
 
     return false;
 }
@@ -70,11 +72,9 @@ class Store extends EventEmitter {
     constructor() {
         super();
 
-        this.x_scale = d3.scale.linear()
-                         .domain([0, 1]);
+        this.x_scale = d3.scale.linear().domain([0, 1]);
 
-        this.enemy_y = d3.scale.threshold()
-                         .domain(d3.range(0, 1, 0.25));
+        this.enemy_y = d3.scale.threshold().domain(d3.range(0, 1, 0.25));
     }
 
     getGameState() {
@@ -84,12 +84,12 @@ class Store extends EventEmitter {
             enemies: Data.enemies,
             player: Data.player,
             bullets: Data.bullets
-        }
+        };
     }
 
     generateEnemy() {
         Data.enemies.push({
-            id: 'invader-'+Data.enemies.length,
+            id: "invader-" + Data.enemies.length,
             alive: true,
             x: this.x_scale(Math.random()),
             y: this.enemy_y(Math.random()),
@@ -101,7 +101,7 @@ class Store extends EventEmitter {
     }
 
     startGame(width, height, N_enemies) {
-        Data =  Data = {
+        Data = Data = {
             timer: null,
             ended: null,
             enemies: [],
@@ -111,18 +111,18 @@ class Store extends EventEmitter {
         Data.width = width;
         Data.height = height;
 
-        this.x_scale.rangeRound([EDGE, width-EDGE]);
-        this.enemy_y.range(d3.range(0, 4, 0.25).map(
-            (i) => EDGE+Math.round(i*height/3)
-        ));
+        this.x_scale.rangeRound([EDGE, width - EDGE]);
+        this.enemy_y.range(
+            d3.range(0, 4, 0.25).map(i => EDGE + Math.round(i * height / 3))
+        );
 
         d3.range(N_enemies).forEach(() => this.generateEnemy());
 
         Data.player = {
             w: 50,
             h: 10,
-            x: width/2,
-            y: height-EDGE,
+            x: width / 2,
+            y: height - EDGE,
             ticks_moving: 0
         };
 
@@ -135,11 +135,11 @@ class Store extends EventEmitter {
     }
 
     advanceGameState() {
-        Data.enemies = Data.enemies.filter((e) => e.alive).map((e) => {
-            e.x = e.x+e.vector[0]*e.speed;
-            e.y = e.y+e.vector[1]*e.speed;
+        Data.enemies = Data.enemies.filter(e => e.alive).map(e => {
+            e.x = e.x + e.vector[0] * e.speed;
+            e.y = e.y + e.vector[1] * e.speed;
 
-            if (e.x <= EDGE || e.x >= Data.width-EDGE) {
+            if (e.x <= EDGE || e.x >= Data.width - EDGE) {
                 e.vector[0] = -e.vector[0];
             }
 
@@ -155,22 +155,25 @@ class Store extends EventEmitter {
         });
 
         Data.bullets = Data.bullets
-                           .map((b) => {
-                               b.ticks_alive += 1;
+            .map(b => {
+                b.ticks_alive += 1;
 
-                               b.x = b.x+b.vector[0]*bullet_speed(b);
-                               b.y = b.y+b.vector[1]*bullet_speed(b);
+                b.x = b.x + b.vector[0] * bullet_speed(b);
+                b.y = b.y + b.vector[1] * bullet_speed(b);
 
-                               return b;
-                           })
-                           .filter((b) =>
-                                !(b.x <= EDGE
-                                   || b.x >= Data.width-EDGE
-                                   || b.y <= EDGE
-                                   || b.y >= Data.height-EDGE)
-                           );
+                return b;
+            })
+            .filter(
+                b =>
+                    !(
+                        b.x <= EDGE ||
+                        b.x >= Data.width - EDGE ||
+                        b.y <= EDGE ||
+                        b.y >= Data.height - EDGE
+                    )
+            );
 
-        if (hit(Data.player) || !Data.enemies.filter((e) => e.alive).length) {
+        if (hit(Data.player) || !Data.enemies.filter(e => e.alive).length) {
             this.stopGame();
         }
     }
@@ -181,11 +184,11 @@ class Store extends EventEmitter {
         p.x += dx;
         p.y += dy;
 
-        if (p.x-p.w/2 <= EDGE || p.x+p.w/2 >= Data.width-EDGE) {
+        if (p.x - p.w / 2 <= EDGE || p.x + p.w / 2 >= Data.width - EDGE) {
             p.x -= dx;
         }
 
-        if (p.y <= Data.height/3 || p.y >= Data.height-EDGE) {
+        if (p.y <= Data.height / 3 || p.y >= Data.height - EDGE) {
             p.y -= dy;
         }
 
@@ -194,11 +197,11 @@ class Store extends EventEmitter {
 
     addBullet(origin, vector) {
         Data.bullets.push({
-            x: origin.x+vector[0]*3,
-            y: origin.y+vector[1]*3+origin.h*vector[1],
+            x: origin.x + vector[0] * 3,
+            y: origin.y + vector[1] * 3 + origin.h * vector[1],
             vector: vector,
             ticks_alive: 0,
-            id: 'bullet-'+(new Date().getTime())+'-'+Math.random()*1000
+            id: "bullet-" + new Date().getTime() + "-" + Math.random() * 1000
         });
     }
 
@@ -215,8 +218,7 @@ class Store extends EventEmitter {
     }
 }
 
-Dispatcher.register(function (action) {
-
+Dispatcher.register(function(action) {
     switch (action.actionType) {
         case TIME_TICK:
             store.advanceGameState();
@@ -231,9 +233,9 @@ Dispatcher.register(function (action) {
         case PLAYER_MOVE:
             if (action.type == MOUSE_TRIGGER) {
                 store.movePlayer(action.dx, action.dy);
-            }else{
+            } else {
                 let speed = player_speed();
-                store.movePlayer(speed*action.dx, speed*action.dy);
+                store.movePlayer(speed * action.dx, speed * action.dy);
             }
             break;
 
@@ -246,8 +248,8 @@ Dispatcher.register(function (action) {
             break;
 
         default:
-            // no op
-    };
+        // no op
+    }
 });
 
 let store = new Store();
