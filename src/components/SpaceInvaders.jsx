@@ -38,16 +38,16 @@ class SpaceInvaders extends Component {
     };
 
     keydown(event) {
-        let key = event.keyIdentifier;
+        let key = event.key;
 
         switch (key) {
-            case "Right":
+            case "ArrowRight":
                 Actions.player_key_move(1, 0);
                 break;
-            case "Left":
+            case "ArrowLeft":
                 Actions.player_key_move(-1, 0);
                 break;
-            case "U+0020":
+            case " ":
                 Actions.player_shoot();
                 break;
             default:
@@ -56,11 +56,11 @@ class SpaceInvaders extends Component {
     }
 
     keyup(event) {
-        let key = event.keyIdentifier;
+        let key = event.key;
 
         switch (key) {
-            case "Right":
-            case "Left":
+            case "ArrowRight":
+            case "ArrowLeft":
                 Actions.player_stop();
                 break;
             default:

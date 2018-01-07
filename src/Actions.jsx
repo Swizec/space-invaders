@@ -1,14 +1,14 @@
-
-import Dispatcher from './Dispatcher';
-import { START_GAME,
-         TIME_TICK,
-         PLAYER_MOVE,
-         MOUSE_TRIGGER,
-         KEY_TRIGGER,
-         PLAYER_STOP,
-         PLAYER_SHOOT,
-         GAME_OVER
-} from './Constants';
+import Dispatcher from "./Dispatcher";
+import {
+    START_GAME,
+    TIME_TICK,
+    PLAYER_MOVE,
+    MOUSE_TRIGGER,
+    KEY_TRIGGER,
+    PLAYER_STOP,
+    PLAYER_SHOOT,
+    GAME_OVER
+} from "./Constants";
 
 export default {
     start_game(width, height, N_enemies) {
@@ -61,5 +61,4 @@ export default {
             actionType: GAME_OVER
         });
     }
-
 };
