@@ -1,5 +1,6 @@
 
 export const START_GAME = 'start_game';
+export const STOP_GAME = 'stop_game';
 export const TIME_TICK = 'tick';
 export const CHANGE_EVENT = 'change';
 export const GAME_OVER = 'game_over';

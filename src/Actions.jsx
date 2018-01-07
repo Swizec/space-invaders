@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import Dispatcher from "./Dispatcher";
 import {
     START_GAME,
@@ -9,6 +10,20 @@ import {
     PLAYER_SHOOT,
     GAME_OVER
 } from "./Constants";
+=======
+
+import Dispatcher from './Dispatcher';
+import { START_GAME,
+         STOP_GAME,
+         TIME_TICK,
+         PLAYER_MOVE,
+         MOUSE_TRIGGER,
+         KEY_TRIGGER,
+         PLAYER_STOP,
+         PLAYER_SHOOT,
+         GAME_OVER
+} from './Constants';
+>>>>>>> 8e8c9210d4ad98eaded5dd1e3310b7867450fb25
 
 export default {
     start_game(width, height, N_enemies) {
@@ -17,6 +32,12 @@ export default {
             width: width,
             height: height,
             N_enemies: N_enemies
+        });
+    },
+
+    stop_game() {
+        Dispatcher.dispatch({
+            actionType: STOP_GAME
         });
     },
 
