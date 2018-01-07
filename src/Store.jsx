@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import * as d3 from "d3";
 
 import Dispatcher from "./Dispatcher";
@@ -6,6 +5,7 @@ import Actions from "./Actions";
 
 import {
     START_GAME,
+    STOP_GAME,
     TIME_TICK,
     CHANGE_EVENT,
     EDGE,
@@ -22,30 +22,6 @@ import {
 } from "./Constants";
 
 const EventEmitter = require("events").EventEmitter;
-=======
-
-const EventEmitter = require('events').EventEmitter;
-import d3 from 'd3';
-
-import Dispatcher from './Dispatcher';
-import { START_GAME,
-         STOP_GAME,
-         TIME_TICK,
-         CHANGE_EVENT,
-         EDGE,
-         PLAYER_MOVE,
-         PLAYER_STOP,
-         PLAYER_SHOOT,
-         MOUSE_TRIGGER,
-         KEY_TRIGGER,
-         PLAYER_MAX_SPEED,
-         BULLET_MAX_SPEED,
-         ENEMY_SHOTS_PER_MINUTE,
-         ENEMY_RADIUS,
-         MS_PER_FRAME
-} from './Constants';
-import Actions from './Actions';
->>>>>>> 8e8c9210d4ad98eaded5dd1e3310b7867450fb25
 
 let Data = {
     timer: null,
