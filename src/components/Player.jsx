@@ -24,8 +24,8 @@ export default class Player extends Component {
             <g transform={position}>
                 <rect x={-this.props.w/2}
                       y={-this.props.h}
-                      width={this.props.w}
-                      height={this.props.h} />
+                      width={this.props.w+10}
+                      height={this.props.h+5} />
             </g>
         );
     }
